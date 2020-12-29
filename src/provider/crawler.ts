@@ -16,16 +16,32 @@ export async function getPrices(name: string) {
     Array.from(document.querySelectorAll(".game-list li"), (element) => {
       const title = element.querySelector(".game-title")?.textContent;
       const price = element.querySelector(".pprice")?.textContent;
-      const imgUrl = element.querySelector(".game-list-cover-col img")?.getAttribute('src');
       const country = element.querySelector(".game-pays")?.textContent;
       const moreInfoLink = element.querySelector(".game-title a")?.getAttribute('href');
-      return { title, price, imgUrl, country, moreInfoLink };
+      return { title, price, country, moreInfoLink };
     })
   );
   browser.close();
   
   return removeEmptyObject(prices);
-} // get element name="search"
+} 
+export async function getTrendGames() {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(URL);
+
+  let prices = await page.evaluate(() =>
+    Array.from(document.querySelectorAll(".home-trends-games-container li"), (element) => {
+      const moreInfoLink = element.querySelector(".game-row-cover a")?.getAttribute('href');
+      const title = element.querySelector(".game-row-title")?.textContent;
+      const price = element.querySelector(".pprice")?.textContent;
+      return { title, price, moreInfoLink };
+    })
+  );
+  browser.close();
+  
+  return removeEmptyObject(prices);
+} 
 
 function removeEmptyObject(array: any[]) {
     return array.filter((item) => Object.keys(item).length > 0);
