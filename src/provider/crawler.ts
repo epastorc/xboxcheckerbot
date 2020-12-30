@@ -22,9 +22,9 @@ export async function getPrices(name: string) {
     })
   );
   browser.close();
-  
+
   return removeEmptyObject(prices);
-} 
+}
 export async function getTrendGames() {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -39,13 +39,13 @@ export async function getTrendGames() {
     })
   );
   browser.close();
-  
+
   return removeEmptyObject(prices);
-} 
+}
 
 function removeEmptyObject(array: any[]) {
-    return array.filter((item) => Object.keys(item).length > 0);
-  }
+  return array.filter((item) => Object.keys(item).length > 0);
+}
 export function generateScreenShot(page: any) {
   return page.screenshot({ path: "example.png" });
 }
