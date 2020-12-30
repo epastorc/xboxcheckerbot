@@ -2,16 +2,16 @@ import { Telegraf } from "telegraf";
 import { searchGamePrice, getTrends } from "../core/search/search";
 import { parseMessageCommand } from "./parse";
 
-const token: string = process.env.TELEGRAM_BOT_TOKEN ? process.env.TELEGRAM_BOT_TOKEN : '';
-const commandSearchPrices: string = 'xbox';
-const commandTrends: string = 'trends';
-const messageWelcome: string = 'Welcome';
+const TOKEN: string = process.env.TELEGRAM_BOT_TOKEN ? process.env.TELEGRAM_BOT_TOKEN : '';
+const COMMAND_SEARCH_PRICES: string = 'xbox';
+const COMMAND_GET_TRENDS: string = 'trends';
+const WELCOME_MESSAGE: string = 'Welcome';
 
-const bot = new Telegraf(token);
+const bot = new Telegraf(TOKEN);
 
 export function handler(): void {
-  bot.start((ctx) => ctx.reply(messageWelcome));
-  bot.command(commandSearchPrices, async (ctx) => {
+  bot.start((ctx) => ctx.reply(WELCOME_MESSAGE));
+  bot.command(COMMAND_SEARCH_PRICES, async (ctx) => {
     const message = parseMessageCommand(ctx);
     if (message) {
       const prices = await searchGamePrice(message);
@@ -26,7 +26,7 @@ export function handler(): void {
       ctx.reply('No hay resultados');
     }
   });
-  bot.command(commandTrends, async (ctx) => {
+  bot.command(COMMAND_GET_TRENDS, async (ctx) => {
 
     const trends = await getTrends();
     if (trends.length === 0) {
