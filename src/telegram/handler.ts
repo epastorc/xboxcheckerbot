@@ -12,6 +12,7 @@ const bot = new Telegraf(TOKEN);
 export function handler(): void {
   bot.start((ctx) => ctx.reply(WELCOME_MESSAGE));
   bot.command(COMMAND_SEARCH_PRICES, async (ctx) => {
+    ctx.reply("Searching for game prices...")
     const message = parseMessageCommand(ctx);
     if (message) {
       const prices = await searchGamePrice(message);
@@ -27,7 +28,7 @@ export function handler(): void {
     }
   });
   bot.command(COMMAND_GET_TRENDS, async (ctx) => {
-
+    ctx.reply("Getting trends...")
     const trends = await getTrends();
     if (trends.length === 0) {
       ctx.reply('No hay resultados');
