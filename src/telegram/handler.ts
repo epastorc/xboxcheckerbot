@@ -1,42 +1,48 @@
 import { Telegraf } from "telegraf";
 import { searchGamePrice, getTrends } from "../core/search/search";
+import { COMMAND_SEARCH_PRICES, COMMAND_GET_TRENDS } from "./commands.type";
 import { parseMessageCommand } from "./parse";
 
 const TOKEN: string = process.env.TELEGRAM_BOT_TOKEN ? process.env.TELEGRAM_BOT_TOKEN : '';
-const COMMAND_SEARCH_PRICES: string = 'xbox';
-const COMMAND_GET_TRENDS: string = 'trends';
+
 const WELCOME_MESSAGE: string = 'Welcome';
 
 const bot = new Telegraf(TOKEN);
 
-export function handler(): void {
-  bot.start((ctx) => ctx.reply(WELCOME_MESSAGE));
-  bot.command(COMMAND_SEARCH_PRICES, async (ctx) => {
+const COMMAND_HANDLERS = {
+  [COMMAND_SEARCH_PRICES]: async (ctx: any) => {
     ctx.reply("Searching for game prices...")
     const message = parseMessageCommand(ctx);
-    if (message) {
-      const prices = await searchGamePrice(message);
-      if (prices.length === 0) {
-        ctx.reply('No hay resultados');
-
-      }
-      prices.forEach(item => {
-        ctx.replyWithHTML(item);
-      })
-    } else {
-      ctx.reply('No hay resultados');
+    if (!message) {
+      ctx.reply('Game name is required.');
+      return
     }
-  });
-  bot.command(COMMAND_GET_TRENDS, async (ctx) => {
+    const prices = await searchGamePrice(message);
+    if (prices.length === 0) {
+      ctx.reply(`No game prices available for ${message}`);
+      return 
+    }
+    prices.forEach(item => {
+      ctx.replyWithHTML(item);
+    })
+  },
+  [COMMAND_GET_TRENDS]: async (ctx: any) => {
     ctx.reply("Getting trends...")
     const trends = await getTrends();
     if (trends.length === 0) {
-      ctx.reply('No hay resultados');
-
+      ctx.reply('There are no trends available.');
+      return
     }
     trends.forEach(item => {
       ctx.replyWithHTML(item);
     })
+  }
+}
+
+export function handler(): void {
+  bot.start(ctx => ctx.reply(WELCOME_MESSAGE));
+  Object.entries(COMMAND_HANDLERS).forEach(([key, value]) => {
+    bot.command(key, value);
   });
   bot.launch();
 
